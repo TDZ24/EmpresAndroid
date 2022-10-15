@@ -166,6 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:backgroundTint="@color/black"
+                android:onClick="Eliminar"
                 android:text="Eliminar" />
 
 
@@ -183,6 +184,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/black"
+                android:onClick="Anular"
                 android:text="Anular" />
 
             <Button

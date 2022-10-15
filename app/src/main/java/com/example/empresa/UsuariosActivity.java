@@ -46,6 +46,7 @@ public class UsuariosActivity extends AppCompatActivity implements Response.List
         jetclave = findViewById(R.id.etclave);
         jcactivo = findViewById(R.id.cbactivo);
         rq = Volley.newRequestQueue(this);
+        sw=0;
     }
 
     public void Consultar(View view) {
@@ -67,6 +68,7 @@ public class UsuariosActivity extends AppCompatActivity implements Response.List
 
     @Override
     public void onResponse(JSONObject response) {
+        sw=1;
         Toast.makeText(this, "Usuario Registrado", Toast.LENGTH_SHORT).show();
         JSONArray jsonArray = response.optJSONArray("datos");
         JSONObject jsonObject = null;
@@ -95,7 +97,12 @@ public class UsuariosActivity extends AppCompatActivity implements Response.List
             jetusuario.requestFocus();
         }
         else{
-            url = "http://172.16.58.9:80/WebServices/registrocorreo.php";
+            if(sw==0)
+                url = "http://172.16.58.9:80/WebServices/registrocorreo.php";
+            else{
+                url = "http://172.16.58.9:80/WebServices/actualiza.php";
+                sw=0;
+            }
             StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                     new Response.Listener<String>()
                     {
@@ -129,6 +136,88 @@ public class UsuariosActivity extends AppCompatActivity implements Response.List
         }
     }
 
+    public void Eliminar(View view){
+        usr=jetusuario.getText().toString();
+
+        if (usr.isEmpty() )
+        {
+            Toast.makeText(this, "El usuario es requerido", Toast.LENGTH_SHORT).show();
+            jetusuario.requestFocus();
+        }
+        else{
+            url = "http://172.16.58.9:80/WebServices/elimina.php";
+
+            StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>()
+                    {
+                        @Override
+                        public void onResponse(String response) {
+                            Limpiar_campos();
+                            Toast.makeText(getApplicationContext(), "Registro eliminado", Toast.LENGTH_LONG).show();
+                        }
+                    },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Error eliminado!!", Toast.LENGTH_LONG).show();
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("usr",jetusuario.getText().toString().trim());
+                    return params;
+                }
+            };
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(postRequest);
+        }
+    }
+
+    public void Anular(View view){
+        usr=jetusuario.getText().toString();
+
+        if (usr.isEmpty() )
+        {
+            Toast.makeText(this, "El usuario es requerido", Toast.LENGTH_SHORT).show();
+            jetusuario.requestFocus();
+        }
+        else{
+            url = "http://172.16.58.9:80/WebServices/anula.php";
+
+            StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>()
+                    {
+                        @Override
+                        public void onResponse(String response) {
+                            Limpiar_campos();
+                            Toast.makeText(getApplicationContext(), "Registro anulado", Toast.LENGTH_LONG).show();
+                        }
+                    },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Error al anular registro!!", Toast.LENGTH_LONG).show();
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("usr",jetusuario.getText().toString().trim());
+                    return params;
+                }
+            };
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(postRequest);
+        }
+    }
+
     public void Limpiar(View view){
         Limpiar_campos();
     }
@@ -144,5 +233,6 @@ public class UsuariosActivity extends AppCompatActivity implements Response.List
         jetclave.setText("");
         jcactivo.setChecked(false);
         jetcorreo.requestFocus();
+        sw=0;
     }
 }
